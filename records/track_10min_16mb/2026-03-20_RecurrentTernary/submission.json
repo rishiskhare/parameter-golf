@@ -1,0 +1,13 @@
+{
+  "track": "10min_16mb",
+  "date": "2026-03-20",
+  "name": "Recurrent Depth Sharing + Ternary Codebook + TTT + Adaptive Recurrence",
+  "author": "rishiskhare",
+  "seed_results": {
+    "1337": {"val_loss": null, "val_bpb": null, "steps": null, "ms_per_step": null}
+  },
+  "mean_val_loss": null,
+  "mean_val_bpb": null,
+  "artifact_bytes": null,
+  "code_bytes": null
+}
