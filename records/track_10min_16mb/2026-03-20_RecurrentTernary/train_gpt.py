@@ -791,7 +791,7 @@ class RecurrentGPT(nn.Module):
                     args.mlp_codebook_max,
                     args.ternary_scale_eps,
                     args.max_recurrent_steps,
-                    args.recurrent_lora_rank,
+                    0,  # no StepLoRA for prelude blocks
                     args.recurrent_lora_alpha,
                     args.rope_scaling,
                     args.rope_original_max_seq_len,
@@ -841,7 +841,7 @@ class RecurrentGPT(nn.Module):
                     args.mlp_codebook_max,
                     args.ternary_scale_eps,
                     args.max_recurrent_steps,
-                    args.recurrent_lora_rank,
+                    0,  # no StepLoRA for coda blocks
                     args.recurrent_lora_alpha,
                     args.rope_scaling,
                     args.rope_original_max_seq_len,
@@ -1439,8 +1439,9 @@ def main() -> None:
 
     train_model: nn.Module = base_model
     if args.compile_model:
+        torch._dynamo.config.cache_size_limit = 64
         train_model = torch.compile(base_model, dynamic=False, fullgraph=False)
-    model: nn.Module = DDP(train_model, device_ids=[local_rank], broadcast_buffers=False, find_unused_parameters=True) if distributed else train_model
+    model: nn.Module = DDP(train_model, device_ids=[local_rank], broadcast_buffers=False, static_graph=True) if distributed else train_model
 
     token_param_names = {"tok_emb.weight", "embed_proj.weight"}
     head_param_names = {"lm_head.weight"} if not args.tie_embeddings else set()
